@@ -1,0 +1,110 @@
+ /* Container for the Verify Code page */
+.verify-code-container {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  margin: 50px auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  position: relative; /* Necessary for positioning */
+  transition: transform 0.3s ease; /* Add smooth transition for scaling */
+}
+
+/* Title Styling */
+.verify-code-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #6a1b9a;
+  margin-bottom: 20px;
+}
+
+/* Description Text Styling */
+.verify-code-text {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Email Input Styling */
+.verify-code-input,
+.verify-code-email-input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  transition: border 0.3s ease-in-out;
+}
+
+.verify-code-input:focus,
+.verify-code-email-input:focus {
+  border: 1px solid #6a1b9a;
+}
+
+/* Submit Button Styling */
+.verify-code-button {
+  background-color: rgb(121, 26, 121);
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.verify-code-button:hover {
+  background-color: rgb(101, 20, 101);
+}
+
+/* Hover Effect to Enlarge the Container */
+.verify-code-container:hover {
+  transform: scale(1.05); /* Enlarge the container */
+}
+
+/* Back to Login Link Styling */
+.back-to-login-link {
+  display: block;
+  margin-top: 20px;
+  color: #333;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.back-to-login-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design for Smaller Screens */
+@media screen and (max-width: 500px) {
+  .verify-code-container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .verify-code-title {
+    font-size: 20px;
+  }
+
+  .verify-code-text {
+    font-size: 14px;
+  }
+
+  .verify-code-input {
+    font-size: 13px;
+  }
+
+  .verify-code-button {
+    font-size: 13px;
+  }
+}
