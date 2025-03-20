@@ -1,0 +1,362 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Basic styling for the body */
+body {
+  font-family: "Arial", sans-serif;
+  position: relative; /* Needed for the ::before pseudo-element */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background: url("https://img.freepik.com/premium-photo/modern-living-room-luxury-apartment-with-skyline-sunset-view_1235831-83402.jpg")
+    no-repeat center center / cover;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* semi-transparent black overlay */
+  z-index: -1; /* Ensures the overlay is behind the content */
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 300 73% 29%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 300 73% 29%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 300 73% 29%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 300 73% 29%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Forgot Password Styles */
+.forgot-password-container {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  margin: 50px auto;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.forgot-password-container:hover {
+  transform: scale(1.05);
+}
+
+.forgot-password-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #6a1b9a;
+}
+
+.forgot-password-text {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.forgot-password-input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  transition: border 0.3s ease-in-out;
+}
+
+.forgot-password-input:focus {
+  border: 1px solid #6a1b9a;
+}
+
+.forgot-password-button {
+  background-color: rgb(121, 26, 121);
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.forgot-password-button:hover {
+  background-color: rgb(101, 20, 101);
+}
+
+.back-to-registration-link {
+  display: block;
+  margin-top: 15px;
+  color: #333;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.back-to-registration-link:hover {
+  text-decoration: underline;
+}
+
+/* Verify Code Styles */
+.verify-code-container {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  margin: 50px auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  position: relative; /* Necessary for positioning */
+  transition: transform 0.3s ease; /* Add smooth transition for scaling */
+}
+
+.verify-code-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #6a1b9a;
+  margin-bottom: 20px;
+}
+
+.verify-code-text {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.verify-code-input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  transition: border 0.3s ease-in-out;
+}
+
+.verify-code-input:focus {
+  border: 1px solid #6a1b9a;
+}
+
+.verify-code-button {
+  background-color: rgb(121, 26, 121);
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.verify-code-button:hover {
+  background-color: rgb(101, 20, 101);
+}
+
+.verify-code-container:hover {
+  transform: scale(1.05); /* Enlarge the container */
+}
+
+/* Reset Password Styles */
+.reset-password-container {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  margin: 50px auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.reset-password-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #6a1b9a;
+  margin-bottom: 20px;
+}
+
+.reset-password-text {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.reset-password-input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  transition: border 0.3s ease-in-out;
+}
+
+.reset-password-input:focus {
+  border: 1px solid #6a1b9a;
+}
+
+.password-strength-text {
+  font-size: 14px;
+  color: #888;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.reset-password-button {
+  background-color: rgb(121, 26, 121);
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.reset-password-button:hover {
+  background-color: rgb(101, 20, 101);
+}
+
+.input-container {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+  color: #333;
+}
+
+/* Dashboard styles */
+.dashboard-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    margin-left: 0;
+  }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 500px) {
+  .forgot-password-container,
+  .verify-code-container,
+  .reset-password-container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .forgot-password-title,
+  .verify-code-title,
+  .reset-password-title {
+    font-size: 20px;
+  }
+
+  .forgot-password-text,
+  .verify-code-text,
+  .reset-password-text {
+    font-size: 14px;
+  }
+
+  .forgot-password-input,
+  .verify-code-input,
+  .reset-password-input {
+    font-size: 13px;
+  }
+
+  .forgot-password-button,
+  .verify-code-button,
+  .reset-password-button {
+    font-size: 13px;
+  }
+}
+
