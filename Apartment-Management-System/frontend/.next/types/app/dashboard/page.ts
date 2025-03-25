@@ -1,4 +1,4 @@
-// File: F:\AMS\app\dashboard\page.tsx
+// File: C:\Users\ASUS\Desktop\se-group-project-group_12_nemra-apartment_management_system\Apartment-Management-System\frontend\app\dashboard\page.tsx
 import * as entry from '../../../../app/dashboard/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
