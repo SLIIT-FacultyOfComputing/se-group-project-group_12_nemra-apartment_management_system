@@ -18,7 +18,7 @@ export default function ForgotPassword() {
     setIsLoading(true)
 
     try {
-      // In a real app, you would send a request to your backend
+      // In a real app, send a request to backend
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500))
 

@@ -19,7 +19,7 @@ export default function VerifyCode() {
     setIsLoading(true)
 
     try {
-      // In a real app, you would verify the code with your backend
+      // In a real app, send the code with backend
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500))
 

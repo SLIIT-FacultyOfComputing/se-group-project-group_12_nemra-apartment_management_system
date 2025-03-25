@@ -13,21 +13,29 @@ export default function AuthPage() {
   const [signIn, setSignIn] = useState(true)
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
-  const { setUser } = useAuth()
+  const { user, setUser } = useAuth()
   const { toast } = useToast()
+
+  // Handle hydration mismatch by only rendering after mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Check if already logged in
   useEffect(() => {
+    if (!mounted) return
+
     const checkAuth = () => {
       const hasToken = document.cookie.includes("auth-token=")
-      if (hasToken) {
+      if (hasToken && user) {
         router.push("/dashboard")
       }
     }
 
     checkAuth()
-  }, [router])
+  }, [router, user, mounted])
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,21 +51,21 @@ export default function AuthPage() {
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
       // Create user object
-      const user = {
+      const user: { username: string; email: string; role: "user" | "admin"; houseNo: string } = {
         username,
         email: `${username}@example.com`,
         role: "user",
         houseNo: "A101",
       }
 
-      // Set user in context
-      setUser(user)
+      // Set a cookie to maintain session
+      document.cookie = `auth-token=demo-token; path=/; max-age=${60 * 60 * 24 * 7}` // 7 days
 
       // Store user in localStorage for persistence
       localStorage.setItem("user", JSON.stringify(user))
 
-      // Set a cookie to maintain session
-      document.cookie = `auth-token=demo-token; path=/; max-age=${60 * 60 * 24 * 7}` // 7 days
+      // Set user in context
+      setUser(user)
 
       toast({
         title: "Login Successful",
@@ -65,10 +73,8 @@ export default function AuthPage() {
         variant: "success",
       })
 
-      // Use a slight delay to ensure the cookie is set before navigation
-      setTimeout(() => {
-        router.push("/dashboard")
-      }, 100)
+      // Navigate to dashboard
+      router.push("/dashboard")
     } catch (error) {
       toast({
         title: "Login Failed",
@@ -96,21 +102,21 @@ export default function AuthPage() {
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
       // Create user object
-      const user = {
+      const user: { username: string; email: string; role: "user" | "admin"; houseNo: string } = {
         username,
         email,
         role: "user",
         houseNo,
       }
 
-      // Set user in context
-      setUser(user)
+      // Set a cookie to maintain session
+      document.cookie = `auth-token=demo-token; path=/; max-age=${60 * 60 * 24 * 7}` // 7 days
 
       // Store user in localStorage for persistence
       localStorage.setItem("user", JSON.stringify(user))
 
-      // Set a cookie to maintain session
-      document.cookie = `auth-token=demo-token; path=/; max-age=${60 * 60 * 24 * 7}` // 7 days
+      // Set user in context
+      setUser(user)
 
       toast({
         title: "Registration Successful",
@@ -118,10 +124,8 @@ export default function AuthPage() {
         variant: "success",
       })
 
-      // Use a slight delay to ensure the cookie is set before navigation
-      setTimeout(() => {
-        router.push("/dashboard")
-      }, 100)
+      // Navigate to dashboard
+      router.push("/dashboard")
     } catch (error) {
       toast({
         title: "Registration Failed",
@@ -133,7 +137,20 @@ export default function AuthPage() {
     }
   }
 
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-800"></div>
+      </div>
+    )
+  }
+
   return (
+    <div>
+    <header style={{ textAlign: "center", padding: "20px", fontSize: "24px", fontWeight: "bold", color: "#ffffff" }}>
+      NEMRA - Apartment Management System
+    </header>
+
     <Components.Container>
       <Components.SignUpContainer signinIn={signIn}>
         <Components.Form onSubmit={handleSignupSubmit}>
@@ -203,6 +220,7 @@ export default function AuthPage() {
         </Components.Overlay>
       </Components.OverlayContainer>
     </Components.Container>
+    </div>
   )
 }
 

@@ -6,16 +6,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { username, email, password, houseNo } = body
 
-    // In a real app, you would validate and store user data in your database
     if (!username || !email || !password) {
       return NextResponse.json({ error: "Username, email, and password are required" }, { status: 400 })
     }
 
-    // Create a session token (in a real app, this would be a JWT)
     const token = "demo-token-" + Math.random().toString(36).substring(2, 9)
 
     // Set the token as a cookie
-    cookies().set({
+    ;(await
+      cookies()).set({
       name: "auth-token",
       value: token,
       httpOnly: true,
