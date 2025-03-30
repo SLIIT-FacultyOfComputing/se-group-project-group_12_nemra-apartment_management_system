@@ -3,7 +3,8 @@ import { cookies } from "next/headers"
 
 export async function POST() {
   // Clear the auth token cookie
-  cookies().set({
+  (await
+    cookies()).set({
     name: "auth-token",
     value: "",
     httpOnly: true,

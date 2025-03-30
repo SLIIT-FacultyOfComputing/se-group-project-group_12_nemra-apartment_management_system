@@ -29,7 +29,7 @@ export default function ResetPassword() {
     setIsLoading(true)
 
     try {
-      // In a real app, you would send the new password to your backend
+      // In a real app, send the new password to backend
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500))
 

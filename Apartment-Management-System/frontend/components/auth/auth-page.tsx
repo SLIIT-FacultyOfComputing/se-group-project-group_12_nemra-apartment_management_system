@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import axios from 'axios';
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -13,51 +14,53 @@ export default function AuthPage() {
   const [signIn, setSignIn] = useState(true)
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
-  const { setUser } = useAuth()
+  const { user, setUser } = useAuth()
   const { toast } = useToast()
+
+  // Handle hydration mismatch by only rendering after mount
+  useEffect(() => {
+    setMounted(true)
+  }, []) 
 
   // Check if already logged in
   useEffect(() => {
+    if (!mounted) return
+
     const checkAuth = () => {
       const hasToken = document.cookie.includes("auth-token=")
-      if (hasToken) {
+      if (hasToken && user) {
         router.push("/dashboard")
       }
     }
 
     checkAuth()
-  }, [router])
+  }, [router, user, mounted])
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-
     try {
       // Get form data
       const formData = new FormData(e.target as HTMLFormElement)
       const username = formData.get("username") as string
       const password = formData.get("password") as string
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      console.log(username);
+      console.log(password);
+      const req = await axios.post("http://localhost:8081/login",{
+        username: username,
+        password: password
+      });
 
       // Create user object
       const user = {
-        username,
-        email: `${username}@example.com`,
-        role: "user",
-        houseNo: "A101",
+        username:req.data.username,
+        email:req.data.email
       }
-
+      localStorage.setItem("user", JSON.stringify(user))
       // Set user in context
       setUser(user)
-
-      // Store user in localStorage for persistence
-      localStorage.setItem("user", JSON.stringify(user))
-
-      // Set a cookie to maintain session
-      document.cookie = `auth-token=demo-token; path=/; max-age=${60 * 60 * 24 * 7}` // 7 days
 
       toast({
         title: "Login Successful",
@@ -65,10 +68,8 @@ export default function AuthPage() {
         variant: "success",
       })
 
-      // Use a slight delay to ensure the cookie is set before navigation
-      setTimeout(() => {
-        router.push("/dashboard")
-      }, 100)
+      // Navigate to dashboard
+      router.push("/dashboard")
     } catch (error) {
       toast({
         title: "Login Failed",
@@ -88,29 +89,25 @@ export default function AuthPage() {
       // Get form data
       const formData = new FormData(e.target as HTMLFormElement)
       const username = formData.get("username") as string
-      const houseNo = formData.get("houseNo") as string
       const email = formData.get("email") as string
       const password = formData.get("password") as string
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
+      const req = await axios.post("http://localhost:8081/signup",{
+        username: username,
+        email: email,
+        password: password
+      });
+      
+      
       // Create user object
-      const user = {
-        username,
-        email,
-        role: "user",
-        houseNo,
+      const user :{username:string;email:string;role : "user" | "admin";} = {
+        username:req.data.username,
+        email:req.data.email,
+        role:"user"
       }
-
+      localStorage.setItem("user", JSON.stringify(user))
       // Set user in context
       setUser(user)
-
-      // Store user in localStorage for persistence
-      localStorage.setItem("user", JSON.stringify(user))
-
-      // Set a cookie to maintain session
-      document.cookie = `auth-token=demo-token; path=/; max-age=${60 * 60 * 24 * 7}` // 7 days
 
       toast({
         title: "Registration Successful",
@@ -118,10 +115,8 @@ export default function AuthPage() {
         variant: "success",
       })
 
-      // Use a slight delay to ensure the cookie is set before navigation
-      setTimeout(() => {
-        router.push("/dashboard")
-      }, 100)
+      // Navigate to dashboard
+      router.push("/dashboard")
     } catch (error) {
       toast({
         title: "Registration Failed",
@@ -133,13 +128,25 @@ export default function AuthPage() {
     }
   }
 
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-800"></div>
+      </div>
+    )
+  }
+
   return (
+    <div>
+    <header style={{ textAlign: "center", padding: "20px", fontSize: "24px", fontWeight: "bold", color: "#ffffff" }}>
+      NEMRA - Apartment Management System
+    </header>
+
     <Components.Container>
       <Components.SignUpContainer signinIn={signIn}>
         <Components.Form onSubmit={handleSignupSubmit}>
           <Components.Title>Create an Account</Components.Title>
           <Components.Input type="text" name="username" placeholder="User Name" required disabled={isLoading} />
-          <Components.Input type="text" name="houseNo" placeholder="House No" required disabled={isLoading} />
           <Components.Input type="email" name="email" placeholder="Email" required disabled={isLoading} />
           <Components.Input type="password" name="password" placeholder="Password" required disabled={isLoading} />
           <Components.Button type="submit" disabled={isLoading}>
@@ -203,6 +210,7 @@ export default function AuthPage() {
         </Components.Overlay>
       </Components.OverlayContainer>
     </Components.Container>
+    </div>
   )
 }
 
