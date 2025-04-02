@@ -56,12 +56,14 @@ export default function AuthPage() {
       // Create user object
       const user = {
         username:req.data.username,
-        email:req.data.email
+        email:req.data.email,
+        isAdmin:req.data.isAdmin,
+        role:"user"
       }
       localStorage.setItem("user", JSON.stringify(user))
       // Set user in context
       setUser(user)
-
+      console.log(user)
       toast({
         title: "Login Successful",
         description: `Welcome back, ${username}!`,
@@ -69,7 +71,11 @@ export default function AuthPage() {
       })
 
       // Navigate to dashboard
-      router.push("/dashboard")
+      if (user.isAdmin == true){
+        router.push("/admin/dashboard")
+      }
+      else
+        router.push("/dashboard")
     } catch (error) {
       toast({
         title: "Login Failed",
@@ -100,10 +106,11 @@ export default function AuthPage() {
       
       
       // Create user object
-      const user :{username:string;email:string;role : "user" | "admin";} = {
+      const user :{username:string;email:string;role : "user" | "admin";isAdmin:Boolean;} = {
         username:req.data.username,
         email:req.data.email,
-        role:"user"
+        role:"user",
+        isAdmin:req.data.isAdmin
       }
       localStorage.setItem("user", JSON.stringify(user))
       // Set user in context
@@ -116,7 +123,11 @@ export default function AuthPage() {
       })
 
       // Navigate to dashboard
-      router.push("/dashboard")
+      if (user.isAdmin == true){
+        router.push("/admin/dashboard")
+      }
+      else
+        router.push("/dashboard")
     } catch (error) {
       toast({
         title: "Registration Failed",
@@ -213,4 +224,3 @@ export default function AuthPage() {
     </div>
   )
 }
-
