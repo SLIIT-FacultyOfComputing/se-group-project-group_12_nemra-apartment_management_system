@@ -72,7 +72,7 @@ export default function DashboardHeader() {
 
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: Home },
-    { name: "Complaints", path: "/dashboard/complaints", icon: MessageSquare },
+    { name: "Complaints / Maintenance", path: "/dashboard/complaints", icon: MessageSquare },
     { name: "Bills", path: "/dashboard/bills", icon: CreditCard },
     { name: "Marketplace", path: "/dashboard/marketplace", icon: ShoppingBag },
   ]
