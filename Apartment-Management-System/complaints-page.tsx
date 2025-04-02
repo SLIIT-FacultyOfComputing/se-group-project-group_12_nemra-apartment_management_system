@@ -26,7 +26,7 @@ export default function ComplaintsPage() {
     category: "Complaints",
   })
   const { toast } = useToast()
-//bills managing
+
   // Simulate fetching complaints
   useEffect(() => {
     const fetchComplaints = async () => {
