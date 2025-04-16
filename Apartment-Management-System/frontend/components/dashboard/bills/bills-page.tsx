@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { CreditCard, Download, CheckCircle, Clock, AlertCircle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
@@ -17,7 +18,9 @@ export default function BillsPage() {
   const [bills, setBills] = useState<Bill[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [filter, setFilter] = useState<"all" | "paid" | "pending" | "overdue">("all")
+  const [typeFilter, setTypeFilter] = useState<string>("all")
   const { toast } = useToast()
+  const router = useRouter()
 
   // Simulate fetching bills
   useEffect(() => {
@@ -29,32 +32,32 @@ export default function BillsPage() {
         {
           id: "1",
           type: "Maintenance",
-          amount: 150,
-          dueDate: "2023-10-25",
+          amount: 2300,
+          dueDate: "2025-04-15",
           status: "pending",
         },
         {
           id: "2",
           type: "Water",
-          amount: 75,
-          dueDate: "2023-10-15",
+          amount: 4000,
+          dueDate: "2025-03-25",
           status: "overdue",
         },
         {
           id: "3",
           type: "Electricity",
-          amount: 120,
-          dueDate: "2023-10-10",
+          amount: 5400,
+          dueDate: "2025-02-10",
           status: "paid",
-          paidDate: "2023-10-08",
+          paidDate: "2025-02-08",
         },
         {
           id: "4",
           type: "Internet",
-          amount: 60,
-          dueDate: "2023-10-05",
+          amount: 4580,
+          dueDate: "2025-01-09",
           status: "paid",
-          paidDate: "2023-10-03",
+          paidDate: "2025-01-08",
         },
       ])
 
@@ -65,24 +68,8 @@ export default function BillsPage() {
   }, [])
 
   const handlePayBill = (id: string) => {
-    // In a real app, you would send a request to your API
-    setBills(
-      bills.map((bill) =>
-        bill.id === id
-          ? {
-              ...bill,
-              status: "paid" as const,
-              paidDate: new Date().toISOString().split("T")[0],
-            }
-          : bill,
-      ),
-    )
-
-    toast({
-      title: "Payment Successful",
-      description: "Your bill has been paid successfully",
-      variant: "success",
-    })
+    // Navigate to payment page with bill ID
+    router.push(`/dashboard/payment?billId=${id}`)
   }
 
   const getStatusBadge = (status: string) => {
@@ -113,24 +100,56 @@ export default function BillsPage() {
     }
   }
 
-  const filteredBills = filter === "all" ? bills : bills.filter((bill) => bill.status === filter)
+  // Get unique bill types for the filter
+  const billTypes = ["all", ...Array.from(new Set(bills.map((bill) => bill.type)))]
+
+  // Filter bills based on status and type
+  const filteredBills = bills.filter((bill) => {
+    const matchesStatus = filter === "all" || bill.status === filter
+    const matchesType = typeFilter === "all" || bill.type === typeFilter
+    return matchesStatus && matchesType
+  })
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-800">Bills</h1>
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-500">Filter:</span>
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value as any)}
-            className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
-          >
-            <option value="all">All</option>
-            <option value="paid">Paid</option>
-            <option value="pending">Pending</option>
-            <option value="overdue">Overdue</option>
-          </select>
+      </div>
+
+      {/* Filter Section */}
+      <div className="bg-white rounded-lg shadow-md p-4">
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-500">Filter by Status:</span>
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value as any)}
+              className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+            >
+              <option value="all">All Status</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Pending</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-500">Filter by Type:</span>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+            >
+              <option value="all">All Types</option>
+              {billTypes
+                .filter((type) => type !== "all")
+                .map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -143,7 +162,9 @@ export default function BillsPage() {
           <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-800 mb-2">No Bills Found</h3>
           <p className="text-gray-500">
-            {filter === "all" ? "You don't have any bills yet." : `You don't have any ${filter} bills.`}
+            {filter === "all" && typeFilter === "all"
+              ? "You don't have any bills yet."
+              : `You don't have any ${filter !== "all" ? filter : ""} ${typeFilter !== "all" ? typeFilter : ""} bills.`}
           </p>
         </div>
       ) : (
@@ -176,7 +197,7 @@ export default function BillsPage() {
                       <div className="text-sm font-medium text-gray-900">{bill.type}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">${bill.amount.toFixed(2)}</div>
+                      <div className="text-sm text-gray-900">Rs{bill.amount.toFixed(2)}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">{bill.dueDate}</div>

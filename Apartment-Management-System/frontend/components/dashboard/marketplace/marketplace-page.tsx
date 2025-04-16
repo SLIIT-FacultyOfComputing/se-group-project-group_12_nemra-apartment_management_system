@@ -42,41 +42,61 @@ export default function MarketplacePage() {
           id: "1",
           title: "Leather Sofa",
           description: "Brown leather sofa in excellent condition, 3 years old.",
-          price: 450,
-          image: "/placeholder.svg?height=200&width=300",
-          seller: "John Doe",
-          date: "2023-10-10",
+          price: 30000,
+          image: "https://assets.wfcdn.com/im/37206897/compr-r85/3066/306628598/clay-78-genuine-leather-sofa.jpg",
+          seller: "R.M.Sudarshan",
+          date: "2024-12-10",
           category: "furniture",
         },
         {
           id: "2",
           title: 'Samsung TV 55"',
           description: "Smart TV with 4K resolution, includes wall mount.",
-          price: 350,
-          image: "/placeholder.svg?height=200&width=300",
-          seller: "Jane Smith",
-          date: "2023-10-15",
+          price: 52000,
+          image: "https://www.greenware.lk/wp-content/uploads/2024/09/Samsung-55-inch-Q65D-QLED-Price-In-Sri-Lanka-scaled.webp",
+          seller: "Nushu Perera",
+          date: "2025-02-27",
           category: "electronics",
         },
         {
           id: "3",
           title: "Refrigerator",
           description: "Double door refrigerator, frost-free, 300L capacity.",
-          price: 500,
-          image: "/placeholder.svg?height=200&width=300",
-          seller: "Mike Johnson",
-          date: "2023-10-18",
+          price: 45000,
+          image: "https://damro.lk/wp-content/uploads/2020/02/DRID240GRS-1-548x450.jpg",
+          seller: "K.Raguwaran",
+          date: "2025-03-18",
           category: "appliances",
         },
         {
           id: "4",
           title: "Dining Table Set",
           description: "Wooden dining table with 6 chairs, good condition.",
-          price: 280,
-          image: "/placeholder.svg?height=200&width=300",
-          seller: "Sarah Williams",
-          date: "2023-10-12",
+          price: 37000,
+          image: "https://www.sierralivingconcepts.com/images/thumbs/0403037_dallas-ranch-rustic-solid-wood-double-pedestal-dining-table-set.jpeg",
+          seller: "W.K.T.Herath",
+          date: "2025-03-29",
           category: "furniture",
+        },
+        {
+          id: "5",
+          title: "Indoor Plant in Decorative Pot",
+          description: "A potted plant like a snake plant, succulent, or fern, placed in a stylish, decorative pots",
+          price: 800,
+          image: "https://smartgardenguide.com/wp-content/uploads/2019/05/best-houseplants-for-beginners-2-1.jpg",
+          seller: "Saraswathi Nandini",
+          date: "2025-04.01",
+          category: "Home Decor",
+        },
+        {
+          id: "6",
+          title: "Geometric Table Lamp",
+          description: "A modern geometric table lamp with a unique design, ideal for placing on side tables or desks",
+          price: 3800,
+          image: "https://m.media-amazon.com/images/I/81PIpVF+osL._AC_UF894,1000_QL80_.jpg",
+          seller: "Gayathri Disanayaka",
+          date: "2025-04.01",
+          category: "Home Decor",
         },
       ])
 
@@ -135,7 +155,7 @@ export default function MarketplacePage() {
     { value: "furniture", label: "Furniture" },
     { value: "electronics", label: "Electronics" },
     { value: "appliances", label: "Appliances" },
-    { value: "decor", label: "Home Decor" },
+    { value: "Home Decor", label: "Home Decor" },
     { value: "other", label: "Other" },
   ]
 
@@ -208,8 +228,7 @@ export default function MarketplacePage() {
                 <div className="flex items-start justify-between">
                   <h3 className="text-lg font-medium text-gray-800">{item.title}</h3>
                   <span className="flex items-center text-green-600 font-bold">
-                    <DollarSign size={16} />
-                    {item.price}
+                  Rs. {item.price}
                   </span>
                 </div>
                 <p className="text-sm text-gray-500 mt-2 line-clamp-2">{item.description}</p>
@@ -279,7 +298,7 @@ export default function MarketplacePage() {
 
               <div className="mb-4">
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                  Price ($)
+                  Price (Rs)
                 </label>
                 <input
                   type="number"
