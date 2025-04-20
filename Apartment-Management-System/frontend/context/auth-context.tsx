@@ -5,8 +5,7 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from "
 type User = {
   username?: string
   email?: string
-  houseNo?: string
-  role?: "admin" | "user"
+  isAdmin?: Boolean
 } | null
 
 type AuthContextType = {
@@ -47,8 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const defaultUser: User = {
               username: "DemoUser",
               email: "demo@example.com",
-              houseNo: "A101",
-              role: "user",
+              isAdmin: true,
             }
             setUser(defaultUser)
             localStorage.setItem("user", JSON.stringify(defaultUser))

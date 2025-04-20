@@ -28,11 +28,6 @@ public class SignupController {
     public SignupController(UserServiceImpl userService) {
         this.userService = userService;
     }
-
-    @GetMapping("/signup")
-    public String showSignupForm(Model model) {
-        return "signup_page.html";
-    }
     class LoginUser{
 		public String username;
 		public String email;
@@ -50,9 +45,8 @@ public class SignupController {
 		}
         User user = new User();
         user.setEmail(formData.get("email"));
-
         user.setUsername(formData.get("username"));
-
+        user.setIsAdmin(false);
         user.setPassword(passwordEncoder.encode(formData.get("password")));
 
         // Save the user to the database
