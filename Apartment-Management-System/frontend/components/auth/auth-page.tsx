@@ -9,6 +9,10 @@ import Link from "next/link"
 import { useAuth } from "@/context/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import * as Components from "@/components/ui/auth-components"
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import {jwtDecode} from "jwt-decode"
+
+
 
 export default function AuthPage() {
   const [signIn, setSignIn] = useState(true)
@@ -18,7 +22,13 @@ export default function AuthPage() {
   const router = useRouter()
   const { user, setUser } = useAuth()
   const { toast } = useToast()
-
+  function onSignIn(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+  }
   // Handle hydration mismatch by only rendering after mount
   useEffect(() => {
     setMounted(true)
@@ -148,6 +158,7 @@ export default function AuthPage() {
   }
 
   return (
+    
     <div>
     <header style={{ textAlign: "center", padding: "20px", fontSize: "24px", fontWeight: "bold", color: "#ffffff" }}>
       NEMRA - Apartment Management System
@@ -166,13 +177,52 @@ export default function AuthPage() {
 
           <Components.Divider>OR</Components.Divider>
 
-          <Components.GoogleButton type="button" disabled={isLoading}>
-            <img
-              src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
-              alt="Google Logo"
-            />
-            Sign In with Google
-          </Components.GoogleButton>
+          <GoogleLogin
+  onSuccess={async (credentialResponse) => {
+    if (!credentialResponse.credential) return;
+    const decoded: { email: string;} = jwtDecode(credentialResponse.credential)
+
+    try {
+      const res = await axios.post("http://localhost:8081/google-auth", {
+        email:decoded.email
+      });
+      const user = {
+        username: res.data.username,
+        email: res.data.email,
+        isAdmin: res.data.isAdmin,
+      };
+      localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
+
+      toast({
+        title: "Google Sign-In Successful",
+        description: `Welcome, ${user.username}!`,
+        variant: "success",
+      });
+
+      if (user.isAdmin) {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      toast({
+        title: "Google Sign-In Failed",
+        description: "Something went wrong while signing in with Google.",
+        variant: "destructive",
+      });
+    }
+  }}
+  onError={() => {
+    toast({
+      title: "Google Sign-In Error",
+      description: "User cancelled or an error occurred",
+      variant: "destructive",
+    });
+  }}
+/>
+
+
         </Components.Form>
       </Components.SignUpContainer>
 
@@ -198,6 +248,51 @@ export default function AuthPage() {
           <Components.Button type="submit" disabled={isLoading}>
             {isLoading ? "Logging In..." : "LOGIN"}
           </Components.Button>
+          
+          <GoogleLogin
+  onSuccess={async (credentialResponse) => {
+    if (!credentialResponse.credential) return;
+    const decoded: { email: string;} = jwtDecode(credentialResponse.credential)
+
+    try {
+      const res = await axios.post("http://localhost:8081/google-auth", {
+        email:decoded.email
+      });
+      const user = {
+        username: res.data.username,
+        email: res.data.email,
+        isAdmin: res.data.isAdmin,
+      };
+      localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
+
+      toast({
+        title: "Google Sign-In Successful",
+        description: `Welcome, ${user.username}!`,
+        variant: "success",
+      });
+
+      if (user.isAdmin) {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      toast({
+        title: "Google Sign-In Failed",
+        description: "Something went wrong while signing in with Google.",
+        variant: "destructive",
+      });
+    }
+  }}
+  onError={() => {
+    toast({
+      title: "Google Sign-In Error",
+      description: "User cancelled or an error occurred",
+      variant: "destructive",
+    });
+  }}
+/>
         </Components.Form>
       </Components.SignInContainer>
 
