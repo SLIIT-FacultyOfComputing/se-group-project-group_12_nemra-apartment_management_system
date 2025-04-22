@@ -14,6 +14,7 @@ import {
   ShoppingBag,
   ChevronDown,
   UserCircle,
+  Car,
 } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
 import { useToast } from "@/hooks/use-toast"
@@ -75,6 +76,7 @@ export default function DashboardHeader() {
     { name: "Complaints / Maintenance", path: "/dashboard/complaints", icon: MessageSquare },
     { name: "Bills", path: "/dashboard/bills", icon: CreditCard },
     { name: "Marketplace", path: "/dashboard/marketplace", icon: ShoppingBag },
+    { name: "Visitor Parking", path: "/dashboard/parking", icon: Car },
   ]
 
   // Don't render until client-side to avoid hydration mismatch
@@ -225,4 +227,3 @@ export default function DashboardHeader() {
     </header>
   )
 }
-
