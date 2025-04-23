@@ -6,7 +6,6 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
-import axios from "axios"
 
 export default function VerifyCode() {
   const [email, setEmail] = useState("")
@@ -22,18 +21,15 @@ export default function VerifyCode() {
     try {
       // In a real app, send the code with backend
       // Simulate API call
-      
-      await axios.post("http://localhost:8081/verify-code",{
-              email:email,
-              verificationCode:verificationCode
-            });
+      await new Promise((resolve) => setTimeout(resolve, 1500))
 
       toast({
         title: "Code Verified",
         description: "Your verification code has been accepted.",
         variant: "success",
       })
-      router.push(`/reset-password?email=${encodeURIComponent(email)}`);
+
+      router.push("/reset-password")
     } catch (error) {
       toast({
         title: "Error",

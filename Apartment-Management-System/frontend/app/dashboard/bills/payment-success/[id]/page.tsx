@@ -57,7 +57,7 @@ export default function PaymentSuccessPage({ params }: { params: { id: string } 
   }, [params.id])
 
   useEffect(() => {
-    let timer
+    let timer: string | number | NodeJS.Timeout | undefined
     if (bill) {
       timer = setInterval(() => {
         setCountdown((prev) => {

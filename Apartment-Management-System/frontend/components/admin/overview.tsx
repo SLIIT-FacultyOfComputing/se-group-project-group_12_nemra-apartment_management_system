@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useAuth } from "@/context/auth-context"
-import { FileText, MessageSquare, CreditCard, Bell, Upload, CheckCircle, AlertCircle, LogOut } from "lucide-react"
+import { FileText, MessageSquare, CreditCard, Bell, Upload, CheckCircle, AlertCircle, LogOut, Car } from "lucide-react"
 
 export default function AdminDashboardOverview() {
   const { user, logout } = useAuth()
@@ -58,9 +58,9 @@ export default function AdminDashboardOverview() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Paid Bills</p>
-              <p className="text-2xl font-bold text-green-600">{stats.paidBills}</p>
+              <p className="text-2xl font-bold text-blue-600">{stats.paidBills}</p>
             </div>
-            <CheckCircle className="h-10 w-10 text-green-500" />
+            <CheckCircle className="h-10 w-10 text-blue-500" />
           </div>
         </div>
 
@@ -78,9 +78,9 @@ export default function AdminDashboardOverview() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Notices</p>
-              <p className="text-2xl font-bold text-blue-600">{stats.notices}</p>
+              <p className="text-2xl font-bold text-yellow-600">{stats.notices}</p>
             </div>
-            <Bell className="h-10 w-10 text-blue-500" />
+            <Bell className="h-10 w-10 text-yellow-500" />
           </div>
         </div>
       </div>
@@ -90,27 +90,11 @@ export default function AdminDashboardOverview() {
         <h2 className="text-xl font-bold text-purple-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
-            href="/admin/bills/upload"
-            className="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
-          >
-            <Upload className="h-8 w-8 text-purple-700 mb-2" />
-            <span className="text-purple-900 font-medium">Upload Bills</span>
-          </Link>
-
-          <Link
-            href="/admin/notices/create"
+            href="/admin/bills"
             className="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
           >
-            <Bell className="h-8 w-8 text-blue-700 mb-2" />
-            <span className="text-blue-900 font-medium">Post Notices</span>
-          </Link>
-
-          <Link
-            href="/admin/bills"
-            className="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
-          >
-            <FileText className="h-8 w-8 text-green-700 mb-2" />
-            <span className="text-green-900 font-medium">View Paid Bills</span>
+            <FileText className="h-8 w-8 text-blue-700 mb-2" />
+            <span className="text-blue-900 font-medium">View Paid Bills</span>
           </Link>
 
           <Link
@@ -120,6 +104,31 @@ export default function AdminDashboardOverview() {
             <MessageSquare className="h-8 w-8 text-red-700 mb-2" />
             <span className="text-red-900 font-medium">View Complaints</span>
           </Link>
+
+          <Link
+            href="/admin/notices"
+            className="flex flex-col items-center p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors"
+          >
+            <Bell className="h-8 w-8 text-yellow-700 mb-2" />
+            <span className="text-yellow-900 font-medium">Post Notices</span>
+          </Link>
+          
+          <Link
+            href="/admin/parking"
+            className="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+          >
+            <Car className="h-8 w-8 text-green-700 mb-2" />
+            <span className="text-green-900 font-medium">View Parking</span>
+          </Link>
+
+          
+          <Link
+            href="/admin/bills/upload"
+            className="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+          >
+            <Upload className="h-8 w-8 text-purple-700 mb-2" />
+            <span className="text-purple-900 font-medium">Upload Bills</span>
+          </Link>
         </div>
       </div>
 
@@ -128,7 +137,7 @@ export default function AdminDashboardOverview() {
         <h2 className="text-xl font-bold text-purple-900 mb-4">Recent Activity</h2>
         <div className="space-y-4">
           <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-md">
-            <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
             <div>
               <p className="font-medium">Bill Payment Received</p>
               <p className="text-sm text-gray-600">Apartment A101 paid water bill - $45.00</p>
@@ -137,7 +146,7 @@ export default function AdminDashboardOverview() {
           </div>
 
           <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-md">
-            <MessageSquare className="h-5 w-5 text-purple-500 mt-0.5" />
+            <MessageSquare className="h-5 w-5 text-red-500 mt-0.5" />
             <div>
               <p className="font-medium">New Complaint Filed</p>
               <p className="text-sm text-gray-600">Apartment B205 reported plumbing issue</p>
@@ -146,11 +155,20 @@ export default function AdminDashboardOverview() {
           </div>
 
           <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-md">
-            <Bell className="h-5 w-5 text-blue-500 mt-0.5" />
+            <Bell className="h-5 w-5 text-yellow-500 mt-0.5" />
             <div>
               <p className="font-medium">Notice Posted</p>
               <p className="text-sm text-gray-600">Maintenance scheduled for tomorrow</p>
               <p className="text-xs text-gray-500 mt-1">Yesterday</p>
+            </div>
+          </div>
+
+          <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-md">
+            <Car className="h-5 w-5 text-green-500 mt-0.5" />
+            <div>
+              <p className="font-medium">Parking Slot Received</p>
+              <p className="text-sm text-gray-600">Parkin Slot 011 Received for tomorrow(11th April)</p>
+              <p className="text-xs text-gray-500 mt-1">Today</p>
             </div>
           </div>
         </div>

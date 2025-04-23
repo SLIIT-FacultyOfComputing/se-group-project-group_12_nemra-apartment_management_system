@@ -6,8 +6,7 @@ import { useAuth } from "@/context/auth-context"
 import AdminDashboardOverview from "@/components/admin/overview"
 
 export default function AdminDashboard() {
-  const { user, loading } = useAuth()
-  const isAdmin = user?.isAdmin
+  const { user, loading, isAdmin } = useAuth()
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
 

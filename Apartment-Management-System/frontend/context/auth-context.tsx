@@ -1,11 +1,13 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { STORAGE_KEYS } from "@/constants"
 
 type User = {
   username?: string
   email?: string
-  isAdmin?: Boolean
+  houseNo?: string
+  role?: "admin" | "user"
 } | null
 
 type AuthContextType = {
@@ -13,6 +15,7 @@ type AuthContextType = {
   setUser: (user: User) => void
   loading: boolean
   logout: () => void
+  isAdmin: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -38,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (hasToken) {
           // Try to get user from localStorage
-          const storedUser = localStorage.getItem("user")
+          const storedUser = localStorage.getItem(STORAGE_KEYS.USER)
           if (storedUser) {
             setUser(JSON.parse(storedUser))
           } else {
@@ -46,10 +49,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const defaultUser: User = {
               username: "DemoUser",
               email: "demo@example.com",
-              isAdmin: true,
+              houseNo: "A101",
+              role: "user",
             }
             setUser(defaultUser)
-            localStorage.setItem("user", JSON.stringify(defaultUser))
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(defaultUser))
           }
         }
       } catch (error) {
@@ -69,9 +73,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!mounted) return
 
     if (user) {
-      localStorage.setItem("user", JSON.stringify(user))
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user))
     } else {
-      localStorage.removeItem("user")
+      localStorage.removeItem(STORAGE_KEYS.USER)
     }
   }, [user, mounted])
 
@@ -81,13 +85,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     document.cookie = "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;"
 
     // Clear localStorage
-    localStorage.removeItem("user")
+    localStorage.removeItem(STORAGE_KEYS.USER)
 
     // Clear user state
     setUser(null)
   }
 
-  return <AuthContext.Provider value={{ user, setUser, loading, logout }}>{children}</AuthContext.Provider>
+  // Check if user is admin
+  const isAdmin = user?.role === "admin"
+
+  return <AuthContext.Provider value={{ user, setUser, loading, logout, isAdmin }}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {

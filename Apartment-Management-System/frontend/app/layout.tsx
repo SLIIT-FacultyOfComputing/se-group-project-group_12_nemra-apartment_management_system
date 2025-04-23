@@ -5,7 +5,6 @@ import "./globals.css"
 import StyledComponentsRegistry from "@/lib/registry"
 import { AuthProvider } from "@/context/auth-context"
 import { ToastProvider } from "@/components/ui/toast-provider"
-import { GoogleOAuthProvider } from "@react-oauth/google"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,15 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <StyledComponentsRegistry>
-        <GoogleOAuthProvider clientId = "1043950846769-ob1jmjdr5mdmsir9hbjn7jjkf480v0gc.apps.googleusercontent.com">
-          
           <AuthProvider>
-          
             <ToastProvider>{children}</ToastProvider>
-          
           </AuthProvider>
-          </GoogleOAuthProvider>
-        
         </StyledComponentsRegistry>
       </body>
     </html>
