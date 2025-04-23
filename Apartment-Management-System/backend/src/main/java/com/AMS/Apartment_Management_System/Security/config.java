@@ -33,7 +33,7 @@ public class config {
                     .sessionManagement(session -> session
                             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(request -> request.requestMatchers("/").permitAll()
-                            .requestMatchers("/signup", "/login","/google-auth").permitAll()
+                            .requestMatchers("/signup", "/login","/google-auth","/reset-password","/reset-password2","/verify-code").permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/**").hasRole("USER")
                             .anyRequest().authenticated());

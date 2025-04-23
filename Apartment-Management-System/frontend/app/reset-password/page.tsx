@@ -6,12 +6,16 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
+import axios from "axios"
+import { useSearchParams } from "next/navigation"
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams();
+  const email = searchParams.get('email');
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,7 +35,10 @@ export default function ResetPassword() {
     try {
       // In a real app, send the new password to backend
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      await axios.post("http://localhost:8081/reset-password2",{
+        email:email,
+        password:password
+      });
 
       toast({
         title: "Success",

@@ -17,4 +17,6 @@ public interface UserService {
 	boolean validateAuthentication(String username, String password);
 
 	public boolean updateUserPassword(String username, String newPassword);
+
+    public void resetPassword(String email, String password);
 }

@@ -6,6 +6,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
+import axios from "axios"
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("")
@@ -20,7 +21,10 @@ export default function ForgotPassword() {
     try {
       // In a real app, send a request to backend
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      
+      await axios.post("http://localhost:8081/reset-password",{
+              email:email
+            });
 
       toast({
         title: "Email Sent",
