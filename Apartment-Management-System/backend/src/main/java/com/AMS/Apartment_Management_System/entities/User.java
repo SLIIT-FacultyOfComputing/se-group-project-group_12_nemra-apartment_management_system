@@ -21,6 +21,8 @@ public class User {
 	private String email;
 	@Column(nullable = false)
 	private Boolean isAdmin;
+	@Column(nullable = true)
+	private String houseNo;
 
 	public long getId() {
 		return id;
@@ -58,5 +60,13 @@ public class User {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getHouseNo() {
+		return houseNo;
+	}
+
+	public void setHouseNo(String houseNo) {
+		this.houseNo = houseNo;
 	}
 }

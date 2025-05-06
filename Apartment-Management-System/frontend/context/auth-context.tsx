@@ -43,7 +43,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // Try to get user from localStorage
           const storedUser = localStorage.getItem(STORAGE_KEYS.USER)
           if (storedUser) {
-            setUser(JSON.parse(storedUser))
+            const parsedUser = JSON.parse(storedUser)
+            console.log('Stored user:', parsedUser)
+            setUser(parsedUser)
           } else {
             // For demo purposes, we'll set a default user
             const defaultUser: User = {
@@ -93,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Check if user is admin
   const isAdmin = user?.role === "admin"
+  console.log('Auth Context - isAdmin:', isAdmin, 'User:', user)
 
   return <AuthContext.Provider value={{ user, setUser, loading, logout, isAdmin }}>{children}</AuthContext.Provider>
 }
