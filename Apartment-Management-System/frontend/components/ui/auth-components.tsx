@@ -1,6 +1,13 @@
 "use client"
 
 import styled from "styled-components"
+import type { ReactNode } from "react"
+
+// Define interface for components that use signinIn prop
+interface SignInProps {
+  signinIn?: boolean
+  children?: ReactNode
+}
 
 // Container for the entire registration form
 export const Container = styled.div`
@@ -16,7 +23,7 @@ export const Container = styled.div`
 `
 
 // SignUpContainer for the sign-up form
-export const SignUpContainer = styled.div`
+export const SignUpContainer = styled.div<SignInProps>`
   position: absolute;
   top: 0;
   height: 100%;
@@ -36,7 +43,7 @@ export const SignUpContainer = styled.div`
 `
 
 // SignInContainer for the sign-in form
-export const SignInContainer = styled.div`
+export const SignInContainer = styled.div<SignInProps>`
   position: absolute;
   top: 0;
   height: 100%;
@@ -132,7 +139,7 @@ export const Anchor = styled.a`
 `
 
 // Overlay container for the transition between the sign-in and sign-up panels
-export const OverlayContainer = styled.div`
+export const OverlayContainer = styled.div<SignInProps>`
   position: absolute;
   top: 0;
   left: 50%;
@@ -145,7 +152,7 @@ export const OverlayContainer = styled.div`
 `
 
 // Overlay transition styling (for background effect)
-export const Overlay = styled.div`
+export const Overlay = styled.div<SignInProps>`
   background: linear-gradient(to right, rgb(121, 26, 121), rgb(90, 50, 90));
   color: #ffffff;
   position: relative;
@@ -219,12 +226,12 @@ export const Divider = styled.div`
   }
 `
 
-export const LeftOverlayPanel = styled(OverlayPanel)`
+export const LeftOverlayPanel = styled(OverlayPanel)<SignInProps>`
   transform: translateX(-20%);
   ${(props) => (props.signinIn !== true ? `transform: translateX(0);` : null)}
 `
 
-export const RightOverlayPanel = styled(OverlayPanel)`
+export const RightOverlayPanel = styled(OverlayPanel)<SignInProps>`
   right: 0;
   transform: translateX(0);
   ${(props) => (props.signinIn !== true ? `transform: translateX(20%);` : null)}

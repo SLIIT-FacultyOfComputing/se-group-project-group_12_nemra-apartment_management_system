@@ -6,11 +6,16 @@ import org.springframework.stereotype.Service;
 
 import com.AMS.Apartment_Management_System.entities.User;
 import com.AMS.Apartment_Management_System.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-	private final UserRepository userRepository;
+	
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
@@ -62,4 +67,11 @@ public class UserServiceImpl implements UserService {
 	public boolean userExists(String username) {
 		return userRepository.findByUsername(username) != null;
 	}
+	
+	@Override
+    public void resetPassword(String email, String password) {
+        User user = userRepository.findByEmail(email);
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        userRepository.save(user);
+    }
 }
