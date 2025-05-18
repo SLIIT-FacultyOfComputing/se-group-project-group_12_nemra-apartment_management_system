@@ -51,28 +51,29 @@ export default function AuthPage() {
       const username = formData.get("username") as string
       const password = formData.get("password") as string
 
-      // Check for admin credentials
-      const isAdmin = username === "admin" && password === "admin1111"
+      // Make API call to backend for login
+      const response = await fetch('http://localhost:8081/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      })
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Create user object
-      const user: { username: string; email: string; role: "user" | "admin"; houseNo: string } = {
-        username,
-        email: `${username}@example.com`,
-        role: isAdmin ? "admin" : "user",
-        houseNo: isAdmin ? "ADMIN" : "A101",
+      if (!response.ok) {
+        throw new Error(await response.text() || 'Login failed')
       }
 
-      // Set a cookie to maintain session
-      document.cookie = `auth-token=demo-token; path=/; max-age=${60 * 60 * 24 * 7}` // 7 days
+      const userData = await response.json()
+      console.log('Login response:', userData)
 
-      // Store user in localStorage for persistence
-      localStorage.setItem("user", JSON.stringify(user))
-
-      // Set user in context
+      // Set user in context and localStorage
+      const user = {
+        username: userData.username,
+        email: userData.email,
+        role: userData.isAdmin === true ? "admin" : "user" as "user" | "admin",
+      }
       setUser(user)
+      localStorage.setItem("user", JSON.stringify(user))
+      document.cookie = `auth-token=demo-token; path=/; max-age=${60 * 60 * 24 * 7}` // 7 days
 
       toast({
         title: "Login Successful",
@@ -80,16 +81,18 @@ export default function AuthPage() {
         variant: "success",
       })
 
-      // Navigate to appropriate dashboard
-      if (isAdmin) {
+      // Redirect based on isAdmin
+      if (userData.isAdmin) {
+        console.log('Navigating to admin dashboard')
         router.push("/admin/dashboard")
       } else {
+        console.log('Navigating to user dashboard')
         router.push("/dashboard")
       }
     } catch (error) {
       toast({
         title: "Login Failed",
-        description: "Invalid username or password",
+        description: error instanceof Error ? error.message : "Invalid username or password",
         variant: "destructive",
       })
     } finally {
@@ -105,20 +108,43 @@ export default function AuthPage() {
       // Get form data
       const formData = new FormData(e.target as HTMLFormElement)
       const username = formData.get("username") as string
-      const houseNo = formData.get("houseNo") as string
       const email = formData.get("email") as string
       const password = formData.get("password") as string
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      console.log('Attempting signup with:', { username, email, password })
+
+      // Make API call to backend
+      const response = await fetch('http://localhost:8081/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password
+        }),
+      });
+
+      console.log('Signup response status:', response.status)
+      const responseText = await response.text()
+      console.log('Signup response text:', responseText)
+
+      if (!response.ok) {
+        throw new Error(responseText || 'Registration failed');
+      }
+
+      const userData = JSON.parse(responseText)
+      console.log('Parsed user data:', userData)
 
       // Create user object
-      const user: { username: string; email: string; role: "user" | "admin"; houseNo: string } = {
-        username,
-        email,
-        role: "user",
-        houseNo,
+      const user: { username: string; email: string; role: "user" | "admin" } = {
+        username: userData.username,
+        email: userData.email,
+        role: "user"
       }
+
+      console.log('Created user object:', user)
 
       // Set a cookie to maintain session
       document.cookie = `auth-token=demo-token; path=/; max-age=${60 * 60 * 24 * 7}` // 7 days
@@ -138,9 +164,10 @@ export default function AuthPage() {
       // Navigate to dashboard
       router.push("/dashboard")
     } catch (error) {
+      console.error('Registration error:', error);
       toast({
         title: "Registration Failed",
-        description: "Failed to create account. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create account. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -167,7 +194,6 @@ export default function AuthPage() {
           <Components.Form onSubmit={handleSignupSubmit}>
             <Components.Title>Create an Account</Components.Title>
             <Components.Input type="text" name="username" placeholder="User Name" required disabled={isLoading} />
-            <Components.Input type="text" name="houseNo" placeholder="House No" required disabled={isLoading} />
             <Components.Input type="email" name="email" placeholder="Email" required disabled={isLoading} />
             <Components.Input type="password" name="password" placeholder="Password" required disabled={isLoading} />
             <Components.Button type="submit" disabled={isLoading}>
@@ -202,7 +228,7 @@ export default function AuthPage() {
               <label>Remember Me</label>
             </Components.RememberMeContainer>
 
-            <Link href="/forgot-password" passHref legacyBehavior>
+            <Link href="/forgot-password" passHref >
               <Components.Anchor>Forgot your username or password?</Components.Anchor>
             </Link>
             <Components.Button type="submit" disabled={isLoading}>

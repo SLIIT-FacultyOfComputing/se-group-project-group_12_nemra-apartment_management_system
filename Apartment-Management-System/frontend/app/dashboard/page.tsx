@@ -6,7 +6,7 @@ import DashboardOverview from "@/components/dashboard/overview"
 import { useAuth } from "@/context/auth-context"
 
 export default function Dashboard() {
-  const { user, loading } = useAuth()
+  const { user, loading, isAdmin } = useAuth()
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
 
@@ -18,11 +18,25 @@ export default function Dashboard() {
   useEffect(() => {
     if (!mounted) return
 
+    console.log('Debug values:', {
+      loading,
+      user,
+      isAdmin,
+      mounted
+    })
+
     // If not loading and no user, redirect to login
     if (!loading && !user) {
+      console.log('Redirecting to login - no user')
       router.push("/")
     }
-  }, [user, loading, router, mounted])
+
+    // If user is admin, redirect to admin dashboard
+    if (!loading && user && isAdmin) {
+      console.log('Redirecting to admin dashboard')
+      router.push("/admin/dashboard")
+    }
+  }, [user, loading, router, mounted, isAdmin])
 
   // Show loading state while checking auth or before mounting
   if (loading || !mounted) {

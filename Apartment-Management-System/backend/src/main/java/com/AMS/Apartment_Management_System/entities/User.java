@@ -13,17 +13,27 @@ public class User {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
-	@Column
+	@Column(nullable = false)
 	private String username;
-	@Column
+	@Column(nullable = false)
 	private String password;
-	@Column
+	@Column(nullable = false)
 	private String email;
+	@Column(nullable = false)
+	private Boolean isAdmin;
+	@Column(nullable = true)
+	private String houseNo;
 
 	public long getId() {
 		return id;
 	}
 
+	public boolean getIsAdmin(){
+		return isAdmin;
+	}
+	public void setIsAdmin(Boolean admin){
+		this.isAdmin = admin;
+	}
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -50,5 +60,13 @@ public class User {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getHouseNo() {
+		return houseNo;
+	}
+
+	public void setHouseNo(String houseNo) {
+		this.houseNo = houseNo;
 	}
 }

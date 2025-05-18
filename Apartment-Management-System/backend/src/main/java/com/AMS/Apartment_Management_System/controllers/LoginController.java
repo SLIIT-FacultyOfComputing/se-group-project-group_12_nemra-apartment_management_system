@@ -31,9 +31,11 @@ public class LoginController {
 	class LoginUser{
 		public String username;
 		public String email;
-		public LoginUser(String username,String email){
+		public Boolean isAdmin;
+		public LoginUser(String username,String email,Boolean isAdmin){
 			this.username = username;
 			this.email = email;
+			this.isAdmin = isAdmin;
 		}	
 	};
 
@@ -46,7 +48,8 @@ public class LoginController {
 		
 		if (userService.validateAuthentication(username, password)) {
 			User user = userService.getUserByUsername(username);
-			LoginUser loginUser = new LoginUser(user.getUsername(),user.getEmail());
+			LoginUser loginUser = new LoginUser(user.getUsername(),user.getEmail(),user.getIsAdmin());
+			System.out.println("Successfully login");
 			return ResponseEntity.ok().body(loginUser);
 		}
 		else {
