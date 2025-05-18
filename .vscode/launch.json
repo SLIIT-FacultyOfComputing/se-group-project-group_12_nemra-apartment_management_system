@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ApartmentManagementSystemApplication<Apartment-Management-System>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.AMS.Apartment_Management_System.ApartmentManagementSystemApplication",
+            "projectName": "Apartment-Management-System",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
