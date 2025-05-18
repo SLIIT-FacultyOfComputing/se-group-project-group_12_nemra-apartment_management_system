@@ -26,11 +26,6 @@
       "static/chunks/main-app.js",
       "static/chunks/app/dashboard/profile/page.js"
     ],
-    "/admin/dashboard/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/admin/dashboard/page.js"
-    ],
     "/dashboard/complaints/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -50,6 +45,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/dashboard/parking/page.js"
+    ],
+    "/admin/dashboard/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/dashboard/page.js"
     ]
   }
 }

@@ -54,6 +54,7 @@ export default function ProfilePage() {
     setIsLoading(true)
 
     try {
+      // Update profile info
       const response = await fetch("http://localhost:8081/api/profile/update", {
         method: "PUT",
         headers: {
@@ -81,13 +82,36 @@ export default function ProfilePage() {
         email: updatedUser.email,
         houseNo: updatedUser.houseNo,
         phone: updatedUser.phone,
+        isAdmin: user?.isAdmin ?? false,
       })
 
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been updated successfully",
-        variant: "success",
-      })
+      // If password fields are filled and match, update password
+      if (profile.password && profile.password === profile.confirmPassword) {
+        const passwordRes = await fetch("http://localhost:8081/api/profile/password", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: user?.username,
+            newPassword: profile.password,
+          }),
+        })
+        if (!passwordRes.ok) {
+          throw new Error("Failed to update password")
+        }
+        toast({
+          title: "Password Updated",
+          description: "Your password has been updated successfully",
+          variant: "success",
+        })
+      } else {
+        toast({
+          title: "Profile Updated",
+          description: "Your profile has been updated successfully",
+          variant: "success",
+        })
+      }
 
       // Clear password fields
       setProfile({
@@ -98,7 +122,7 @@ export default function ProfilePage() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update profile. Please try again.",
+        description: "Failed to update profile or password. Please try again.",
         variant: "destructive",
       })
     } finally {

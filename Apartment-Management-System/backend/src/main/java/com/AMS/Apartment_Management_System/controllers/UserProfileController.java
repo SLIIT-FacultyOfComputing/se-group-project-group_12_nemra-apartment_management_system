@@ -3,6 +3,7 @@ package com.AMS.Apartment_Management_System.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import com.AMS.Apartment_Management_System.Services.UserServiceImpl;
 import com.AMS.Apartment_Management_System.entities.User;
@@ -43,6 +44,25 @@ public class UserProfileController {
             return ResponseEntity.ok().body(user);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error updating profile: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> data) {
+        try {
+            String username = data.get("username");
+            String newPassword = data.get("newPassword");
+            if (username == null || newPassword == null) {
+                return ResponseEntity.badRequest().body("Missing username or newPassword");
+            }
+            boolean updated = userService.updateUserPassword(username, newPassword);
+            if (updated) {
+                return ResponseEntity.ok().body("Password updated successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error updating password: " + e.getMessage());
         }
     }
 } 

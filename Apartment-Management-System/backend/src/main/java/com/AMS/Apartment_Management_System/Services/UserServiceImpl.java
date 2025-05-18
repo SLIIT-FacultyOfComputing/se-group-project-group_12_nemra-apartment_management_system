@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
 			return false;
 		}
-		user.setPassword(newPassword);
+		user.setPassword(bCryptPasswordEncoder.encode(newPassword));
 		saveUser(user);
 		return true;
     }
