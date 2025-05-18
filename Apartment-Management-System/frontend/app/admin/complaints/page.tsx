@@ -1,58 +1,26 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { MessageSquare, CheckCircle, XCircle, MessageCircle, Eye, Edit } from "lucide-react"
 
 export default function AdminComplaintsPage() {
   const router = useRouter()
-  const [complaints] = useState([
-    {
-      id: "1",
-      apartment: "B205",
-      title: "Plumbing Issue",
-      description: "The sink in the bathroom is leaking and causing water damage.",
-      status: "pending",
-      date: "2023-05-18",
-    },
-    {
-      id: "2",
-      apartment: "A101",
-      title: "Noise Complaint",
-      description: "Excessive noise from apartment above during late hours.",
-      status: "resolved",
-      date: "2023-05-15",
-      resolution: "Spoke with resident in apartment above. They agreed to be mindful of noise levels after 10 PM.",
-    },
-    {
-      id: "3",
-      apartment: "C301",
-      title: "Broken AC",
-      description: "Air conditioning unit is not working properly.",
-      status: "in-progress",
-      date: "2023-05-17",
-      resolution: "Technician scheduled for May 22nd.",
-    },
-    {
-      id: "4",
-      apartment: "B202",
-      title: "Pest Control",
-      description: "Spotted cockroaches in the kitchen area.",
-      status: "pending",
-      date: "2023-05-19",
-    },
-    {
-      id: "5",
-      apartment: "A103",
-      title: "Parking Issue",
-      description: "Someone is repeatedly parking in my assigned spot.",
-      status: "resolved",
-      date: "2023-05-10",
-      resolution: "Identified the vehicle owner and issued a warning. Parking spot signs have been made clearer.",
-    },
-  ])
-
+  const [complaints, setComplaints] = useState<any[]>([])
   const [filter, setFilter] = useState("all")
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      const res = await fetch("http://localhost:8081/api/requests")
+      if (res.ok) {
+        const data = await res.json()
+        setComplaints(data)
+      }
+      setIsLoading(false)
+    }
+    fetchComplaints()
+  }, [])
 
   const filteredComplaints = complaints.filter((complaint) => {
     if (filter === "pending") return complaint.status === "pending"
@@ -128,6 +96,11 @@ export default function AdminComplaintsPage() {
           </button>
         </div>
 
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-800"></div>
+          </div>
+        ) : (
         <div className="space-y-4">
           {filteredComplaints.map((complaint) => (
             <div key={complaint.id} className="border rounded-lg p-4 hover:bg-gray-50">
@@ -137,11 +110,11 @@ export default function AdminComplaintsPage() {
                   <div>
                     <div className="flex items-center space-x-2">
                       <h3 className="font-medium text-lg">{complaint.title}</h3>
-                      {getStatusBadge(complaint.status)}
+                      {getStatusBadge(complaint.status || complaint.Status || "pending")}
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">Apartment: {complaint.apartment}</p>
+                    <p className="text-sm text-gray-500 mt-1">Apartment: {complaint.apartment || "-"}</p>
                     <p className="text-gray-600 mt-1">{complaint.description}</p>
-                    <p className="text-sm text-gray-500 mt-2">Submitted on: {complaint.date}</p>
+                    <p className="text-sm text-gray-500 mt-2">Submitted on: {complaint.date || "-"}</p>
                     {complaint.resolution && (
                       <div className="mt-2 p-2 bg-gray-100 rounded-md">
                         <p className="text-sm font-medium">Resolution:</p>
@@ -168,13 +141,14 @@ export default function AdminComplaintsPage() {
             </div>
           ))}
 
-          {filteredComplaints.length === 0 && (
+          {filteredComplaints.length === 0 && !isLoading && (
             <div className="text-center py-8">
               <MessageSquare className="h-12 w-12 mx-auto text-gray-400 mb-3" />
               <p className="text-gray-500">No complaints found with the selected filter.</p>
             </div>
           )}
         </div>
+        )}
       </div>
     </div>
   )

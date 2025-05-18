@@ -27,6 +27,9 @@ public class Request {
     @Column
     private String status;
 
+    @Column
+    private String adminResponse;
+
     public long getId() {
         return id;
     }
@@ -65,5 +68,13 @@ public class Request {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getAdminResponse() {
+        return adminResponse;
+    }
+
+    public void setAdminResponse(String adminResponse) {
+        this.adminResponse = adminResponse;
     }
 }

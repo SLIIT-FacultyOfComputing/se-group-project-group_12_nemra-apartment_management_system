@@ -30,43 +30,17 @@ export default function ComplaintsPage() {
   // Simulate fetching complaints
   useEffect(() => {
     const fetchComplaints = async () => {
-      // In a real app, you would fetch this data from your API
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      setComplaints([
-        {
-          id: "1",
-          title: "Elevator not working",
-          description: "The elevator on the east wing has been out of service for 2 days",
-          category: "Maintenance",
-          status: "in-progress",
-          date: "2025-05-01",
-        },
-        {
-          id: "2",
-          title: "Water leakage in bathroom",
-          description: "There is water leaking from the ceiling in my bathroom",
-          category: "Maintenance",
-          status: "open",
-          date: "2025-05-10",
-        },
-        {
-          id: "3",
-          title: "Noise complaint",
-          description: "Loud music from apartment 302 after 11 PM",
-          category: "Complaints",
-          status: "resolved",
-          date: "2024-10-10",
-        },
-      ])
-
+      const res = await fetch("http://localhost:8081/api/requests")
+      if (res.ok) {
+        const data = await res.json()
+        setComplaints(data)
+      }
       setIsLoading(false)
     }
-
     fetchComplaints()
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!newComplaint.title || !newComplaint.description) {
@@ -78,25 +52,44 @@ export default function ComplaintsPage() {
       return
     }
 
-    // In a real app, you would send this to your API
-    const complaint: Complaint = {
-      id: Date.now().toString(),
-      title: newComplaint.title,
-      description: newComplaint.description,
-      category: newComplaint.category,
-      status: "open",
-      date: new Date().toISOString().split("T")[0],
+    try {
+      const response = await fetch("http://localhost:8081/api/requests/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: newComplaint.title,
+          description: newComplaint.description,
+          category: newComplaint.category,
+        }),
+      })
+      if (!response.ok) {
+        throw new Error("Failed to submit complaint")
+      }
+      // Optionally, fetch the updated list from the backend
+      const fetchComplaints = async () => {
+        const res = await fetch("http://localhost:8081/api/requests")
+        if (res.ok) {
+          const data = await res.json()
+          setComplaints(data)
+        }
+      }
+      await fetchComplaints()
+      setNewComplaint({ title: "", description: "", category: "Complaints" })
+      setIsModalOpen(false)
+      toast({
+        title: "Complaint Submitted",
+        description: "Your complaint has been submitted successfully",
+        variant: "success",
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit complaint. Please try again.",
+        variant: "destructive",
+      })
     }
-
-    setComplaints([complaint, ...complaints])
-    setNewComplaint({ title: "", description: "", category: "Complaints" })
-    setIsModalOpen(false)
-
-    toast({
-      title: "Complaint Submitted",
-      description: "Your complaint has been submitted successfully",
-      variant: "success",
-    })
   }
 
   const getStatusBadge = (status: string) => {

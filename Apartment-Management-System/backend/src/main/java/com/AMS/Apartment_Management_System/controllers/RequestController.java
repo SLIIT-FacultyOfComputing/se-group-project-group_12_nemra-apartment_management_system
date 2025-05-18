@@ -2,6 +2,7 @@ package com.AMS.Apartment_Management_System.controllers;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -43,5 +44,12 @@ public class RequestController {
     @PutMapping("/{id}/status")
     public Request updateRequestStatus(@PathVariable Long id, @RequestParam String status) {
         return requestService.updateStatus(id, status);
+    }
+
+    @PutMapping("/{id}/admin-respond")
+    public Request adminRespondToRequest(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String status = body.get("status");
+        String adminResponse = body.get("adminResponse");
+        return requestService.adminRespond(id, status, adminResponse);
     }
 }

@@ -37,4 +37,15 @@ public class RequestService {
         }
         return null;
     }
+
+    public Request adminRespond(Long id, String status, String adminResponse) {
+        Optional<Request> optionalRequest = requestRepository.findById(id);
+        if (optionalRequest.isPresent()) {
+            Request request = optionalRequest.get();
+            request.setStatus(status);
+            request.setAdminResponse(adminResponse);
+            return requestRepository.save(request);
+        }
+        return null;
+    }
 }

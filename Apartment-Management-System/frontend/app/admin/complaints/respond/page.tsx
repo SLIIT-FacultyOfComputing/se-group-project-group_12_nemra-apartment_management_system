@@ -20,65 +20,20 @@ export default function RespondToComplaintPage() {
 
   const complaintId = searchParams.get("id")
 
-  // Mock complaints data
-  const complaints = [
-    {
-      id: "1",
-      apartment: "B205",
-      title: "Plumbing Issue",
-      description: "The sink in the bathroom is leaking and causing water damage.",
-      status: "pending",
-      date: "2023-05-18",
-    },
-    {
-      id: "2",
-      apartment: "A101",
-      title: "Noise Complaint",
-      description: "Excessive noise from apartment above during late hours.",
-      status: "resolved",
-      date: "2023-05-15",
-      resolution: "Spoke with resident in apartment above. They agreed to be mindful of noise levels after 10 PM.",
-    },
-    {
-      id: "3",
-      apartment: "C301",
-      title: "Broken AC",
-      description: "Air conditioning unit is not working properly.",
-      status: "in-progress",
-      date: "2023-05-17",
-      resolution: "Technician scheduled for May 22nd.",
-    },
-    {
-      id: "4",
-      apartment: "B202",
-      title: "Pest Control",
-      description: "Spotted cockroaches in the kitchen area.",
-      status: "pending",
-      date: "2023-05-19",
-    },
-    {
-      id: "5",
-      apartment: "A103",
-      title: "Parking Issue",
-      description: "Someone is repeatedly parking in my assigned spot.",
-      status: "resolved",
-      date: "2023-05-10",
-      resolution: "Identified the vehicle owner and issued a warning. Parking spot signs have been made clearer.",
-    },
-  ]
-
   useEffect(() => {
     if (complaintId) {
-      // Simulate API call to fetch complaint details
-      setTimeout(() => {
-        const foundComplaint = complaints.find((c) => c.id === complaintId)
-        if (foundComplaint) {
-          setComplaint(foundComplaint)
-          setResponseText(foundComplaint.resolution || "")
-          setStatus(foundComplaint.status)
+      // Fetch complaint details from backend
+      const fetchComplaint = async () => {
+        const res = await fetch(`http://localhost:8081/api/requests/${complaintId}`)
+        if (res.ok) {
+          const data = await res.json()
+          setComplaint(data)
+          setResponseText(data.adminResponse || "")
+          setStatus(data.status || "in-progress")
         }
         setIsLoading(false)
-      }, 500)
+      }
+      fetchComplaint()
     } else {
       router.push("/admin/complaints")
     }
@@ -99,8 +54,15 @@ export default function RespondToComplaintPage() {
     setIsSubmitting(true)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      const res = await fetch(`http://localhost:8081/api/requests/${complaintId}/admin-respond`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status,
+          adminResponse: responseText,
+        }),
+      })
+      if (!res.ok) throw new Error("Failed to submit response")
 
       toast({
         title: "Response Submitted",
@@ -155,10 +117,10 @@ export default function RespondToComplaintPage() {
           <h2 className="text-xl font-semibold text-gray-800">{complaint.title}</h2>
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 mt-2 text-sm text-gray-500">
             <p>
-              Apartment: <span className="font-medium">{complaint.apartment}</span>
+              Apartment: <span className="font-medium">{complaint.apartment || "-"}</span>
             </p>
             <p>
-              Submitted: <span className="font-medium">{complaint.date}</span>
+              Submitted: <span className="font-medium">{complaint.date || "-"}</span>
             </p>
             <p>
               Status: <span className="font-medium capitalize">{complaint.status}</span>

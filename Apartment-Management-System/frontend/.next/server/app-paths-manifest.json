@@ -1,10 +1,9 @@
 {
   "/page": "app/page.js",
+  "/admin/complaints/page": "app/admin/complaints/page.js",
   "/admin/dashboard/page": "app/admin/dashboard/page.js",
+  "/admin/complaints/respond/page": "app/admin/complaints/respond/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/dashboard/profile/page": "app/dashboard/profile/page.js",
-  "/dashboard/bills/page": "app/dashboard/bills/page.js",
-  "/dashboard/marketplace/page": "app/dashboard/marketplace/page.js",
   "/dashboard/complaints/page": "app/dashboard/complaints/page.js",
-  "/dashboard/parking/page": "app/dashboard/parking/page.js"
+  "/dashboard/profile/page": "app/dashboard/profile/page.js"
 }

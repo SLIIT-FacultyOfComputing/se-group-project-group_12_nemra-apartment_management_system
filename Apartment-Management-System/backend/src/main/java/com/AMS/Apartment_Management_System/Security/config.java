@@ -41,6 +41,9 @@ public class config {
                             .requestMatchers("/signup", "/login","/google-auth","/reset-password","/reset-password2","/verify-code").permitAll()
                             .requestMatchers("/api/profile/**").permitAll()
                             .requestMatchers("/api/profile/password").permitAll()
+                            .requestMatchers("/api/requests").permitAll()
+                            .requestMatchers("/api/requests/submit").permitAll()
+                            .requestMatchers("/api/requests/**").permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/**").hasRole("USER")
                             .anyRequest().authenticated());
