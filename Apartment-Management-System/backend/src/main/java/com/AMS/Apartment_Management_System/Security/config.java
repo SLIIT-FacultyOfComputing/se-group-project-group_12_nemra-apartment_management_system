@@ -12,6 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import java.util.Arrays;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -29,16 +33,30 @@ public class config {
         public SecurityFilterChain securityFilterChain(HttpSecurity http)
                 throws Exception {
             http.csrf(AbstractHttpConfigurer::disable)
-                    
+                    .cors()
+                    .and()
                     .sessionManagement(session -> session
                             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(request -> request.requestMatchers("/").permitAll()
                             .requestMatchers("/signup", "/login","/google-auth","/reset-password","/reset-password2","/verify-code").permitAll()
+                            .requestMatchers("/api/profile/**").permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/**").hasRole("USER")
                             .anyRequest().authenticated());
     
             return http.build();
+        }
+    
+        @Bean
+        public CorsFilter corsFilter() {
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowCredentials(true);
+            config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+            config.setAllowedHeaders(Arrays.asList("*"));
+            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            source.registerCorsConfiguration("/**", config);
+            return new CorsFilter(source);
         }
     
         @Bean

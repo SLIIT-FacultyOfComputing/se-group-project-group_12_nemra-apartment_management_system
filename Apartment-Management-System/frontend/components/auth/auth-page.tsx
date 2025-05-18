@@ -70,6 +70,8 @@ export default function AuthPage() {
         username: userData.username,
         email: userData.email,
         role: userData.isAdmin === true ? "admin" : "user" as "user" | "admin",
+        houseNo: userData.houseNo || "",
+        phone: userData.phone || ""
       }
       setUser(user)
       localStorage.setItem("user", JSON.stringify(user))

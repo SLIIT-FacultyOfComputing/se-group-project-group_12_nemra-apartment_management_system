@@ -1,18 +1,19 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { STORAGE_KEYS } from "@/constants"
 
-type User = {
-  username?: string
-  email?: string
+interface User {
+  username: string
+  email: string
+  isAdmin: boolean
   houseNo?: string
-  role?: "admin" | "user"
-} | null
+  phone?: string
+}
 
-type AuthContextType = {
-  user: User
-  setUser: (user: User) => void
+interface AuthContextType {
+  user: User | null
+  setUser: (user: User | null) => void
   loading: boolean
   logout: () => void
   isAdmin: boolean
@@ -21,7 +22,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
 

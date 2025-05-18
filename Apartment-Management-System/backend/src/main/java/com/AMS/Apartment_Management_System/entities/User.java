@@ -23,6 +23,8 @@ public class User {
 	private Boolean isAdmin;
 	@Column(nullable = true)
 	private String houseNo;
+	@Column(nullable = true)
+	private String phone;
 
 	public long getId() {
 		return id;
@@ -68,5 +70,13 @@ public class User {
 
 	public void setHouseNo(String houseNo) {
 		this.houseNo = houseNo;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 }

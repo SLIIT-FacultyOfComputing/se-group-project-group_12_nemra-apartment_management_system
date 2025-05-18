@@ -18,7 +18,7 @@ export default function ProfilePage() {
     username: "",
     email: "",
     houseNo: "",
-    phone: "555-123-4567", // Example data
+    phone: "",
     password: "",
     confirmPassword: "",
   })
@@ -34,6 +34,7 @@ export default function ProfilePage() {
         username: user.username || "",
         email: user.email || "",
         houseNo: user.houseNo || "",
+        phone: user.phone || "",
       })
     }
   }, [user])
@@ -53,15 +54,33 @@ export default function ProfilePage() {
     setIsLoading(true)
 
     try {
-      // In a real app, you would send this to your API
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      const response = await fetch("http://localhost:8081/api/profile/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: user?.username,
+          newUsername: profile.username,
+          email: profile.email,
+          houseNo: profile.houseNo,
+          phone: profile.phone,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to update profile")
+      }
+
+      const updatedUser = await response.json()
 
       // Update user context
       setUser({
         ...user,
-        username: profile.username,
-        email: profile.email,
-        houseNo: profile.houseNo,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        houseNo: updatedUser.houseNo,
+        phone: updatedUser.phone,
       })
 
       toast({
@@ -327,7 +346,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                  <div className="pt-6 border-t border-gray-200">
+                  <div>
                     <h3 className="text-md font-medium text-gray-800 mb-4">Two-Factor Authentication</h3>
                     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-md">
                       <div>
