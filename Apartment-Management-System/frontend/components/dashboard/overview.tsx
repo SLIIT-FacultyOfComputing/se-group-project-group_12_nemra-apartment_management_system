@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { CreditCard, MessageSquare, ShoppingBag, AlertCircle, CheckCircle, Clock, AlignCenter } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
 import NoticeBox from './NoticeBox'
+import axios from "axios"
 
 export default function DashboardOverview() {
   const { user } = useAuth()
@@ -17,6 +18,7 @@ export default function DashboardOverview() {
     marketplaceItems: 0,
      
   })
+  const [notices, setNotices] = useState<any[]>([])
 
   // Simulate fetching data
   useEffect(() => {
@@ -37,6 +39,18 @@ export default function DashboardOverview() {
     fetchData()
   }, [])
 
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        const res = await axios.get("http://localhost:8081/api/notices")
+        setNotices(res.data)
+      } catch (err) {
+        setNotices([])
+      }
+    }
+    fetchNotices()
+  }, [])
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -46,23 +60,20 @@ export default function DashboardOverview() {
 
       {/* Post Notices Section */}
       <div className="flex justify-center items-center mb-6">
-  <h1 className="text-2xl font-bold text-gray-800">Recent Notices</h1></div>
+        <h1 className="text-2xl font-bold text-gray-800">Recent Notices</h1>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <NoticeBox
-          imageUrl="https://i.pinimg.com/564x/f3/ae/26/f3ae261f06558ebc95534516ac06d04c.jpg"
-          postName="Spring BBQ Event"
-          description="Join us for the annual Spring BBQ on July 5th at 4 PM in the community courtyard. Free food and drinks for all residents!"
-        />
-        <NoticeBox
-          imageUrl="https://png.pngtree.com/png-clipart/20230922/original/pngtree-red-do-not-icon-indicates-contaminated-tap-water-should-not-be-png-image_12826372.png"
-          postName="Scheduled Maintenance on Water Supply"
-          description="Please note that water supply will be interrupted from 9 AM to 12 PM on July 15nd, 2025, for essential maintenance. Kindly plan accordingly"
-        />
-        <NoticeBox
-          imageUrl="https://www.creativefabrica.com/wp-content/uploads/2021/10/05/Security-Camera-CCTV-Icon-Graphics-18348730-1-1-580x386.jpg"
-          postName="New Security Cameras Installed"
-          description="We have installed new security cameras in common areas for your safety. If you have any concerns, please contact management"
-        />
+        {notices.length === 0 ? (
+          <div className="col-span-3 text-center text-gray-500">No notices found.</div>
+        ) : (
+          notices.slice(-3).reverse().map((notice) => (
+            <NoticeBox
+              key={notice.id}
+              postName={notice.subject}
+              description={notice.content}
+            />
+          ))
+        )}
       </div>
 
       {/* Dashboard Cards */}

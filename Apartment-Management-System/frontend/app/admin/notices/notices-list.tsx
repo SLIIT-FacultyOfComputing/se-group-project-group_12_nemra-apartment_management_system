@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Edit, Eye, Trash2 } from "lucide-react"
 import { EditNoticeDialog } from "./edit-notice-dialog"
+import axios from "axios"
 
 // Mock data for demonstration
 const MOCK_NOTICES = [
@@ -40,14 +41,25 @@ export type Notice = {
   id: string
   subject: string
   content: string
-  imageUrl: string | null
   createdAt: string
-  status: string
+  status?: string
 }
 
 export function NoticesList() {
-  const [notices, setNotices] = useState<Notice[]>(MOCK_NOTICES)
+  const [notices, setNotices] = useState<Notice[]>([])
   const [editingNotice, setEditingNotice] = useState<Notice | null>(null)
+
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        const res = await axios.get("http://localhost:8081/api/notices")
+        setNotices(res.data)
+      } catch (err) {
+        setNotices([])
+      }
+    }
+    fetchNotices()
+  }, [])
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -57,9 +69,14 @@ export function NoticesList() {
     })
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this notice?")) {
-      setNotices(notices.filter((notice) => notice.id !== id))
+      try {
+        await axios.delete(`http://localhost:8081/api/notices/${id}`)
+        setNotices(notices.filter((notice) => notice.id !== id))
+      } catch (err) {
+        alert("Failed to delete notice!")
+      }
     }
   }
 
@@ -67,9 +84,14 @@ export function NoticesList() {
     setEditingNotice(notice)
   }
 
-  const handleSaveEdit = (updatedNotice: Notice) => {
-    setNotices(notices.map((notice) => (notice.id === updatedNotice.id ? updatedNotice : notice)))
-    setEditingNotice(null)
+  const handleSaveEdit = async (updatedNotice: Notice) => {
+    try {
+      const res = await axios.put(`http://localhost:8081/api/notices/${updatedNotice.id}`, updatedNotice)
+      setNotices(notices.map((notice) => (notice.id === updatedNotice.id ? res.data : notice)))
+      setEditingNotice(null)
+    } catch (err) {
+      alert("Failed to update notice!")
+    }
   }
 
   return (
@@ -89,8 +111,6 @@ export function NoticesList() {
               <TableRow>
                 <TableHead>Subject</TableHead>
                 <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Image</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -99,31 +119,6 @@ export function NoticesList() {
                 <TableRow key={notice.id}>
                   <TableCell className="font-medium">{notice.subject}</TableCell>
                   <TableCell>{formatDate(notice.createdAt)}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={`${
-                        notice.status === "active"
-                          ? "bg-purple-600 hover:bg-purple-600 text-white"
-                          : "bg-gray-200 hover:bg-gray-200 text-gray-700"
-                      }`}
-                    >
-                      {notice.status === "active" ? "Active" : "Archived"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {notice.imageUrl ? (
-                      <div className="h-10 w-10 rounded overflow-hidden">
-                        <img
-                          src={notice.imageUrl || "/placeholder.svg"}
-                          alt={notice.subject}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <span className="text-gray-500 text-sm">No image</span>
-                    )}
-                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button variant="ghost" size="icon" title="View">

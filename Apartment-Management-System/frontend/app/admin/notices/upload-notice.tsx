@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Check, Upload, X } from "lucide-react"
+import axios from "axios"
 
 interface UploadNoticeProps {
   onCancel?: () => void
@@ -68,19 +69,23 @@ export function UploadNotice({ onCancel }: UploadNoticeProps) {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    // Reset form
-    setSubject("")
-    setContent("")
-    setImage(null)
-    setImagePreview(null)
-    setIsSubmitting(false)
-
-    // Show success message and redirect
-    alert("Notice uploaded successfully!")
-    router.push("/admin/notices")
+    try {
+      await axios.post("http://localhost:8081/api/notices", {
+        subject,
+        content
+      })
+      // Reset form
+      setSubject("")
+      setContent("")
+      setImage(null)
+      setImagePreview(null)
+      setIsSubmitting(false)
+      alert("Notice uploaded successfully!")
+      router.push("/admin/notices")
+    } catch (error) {
+      setIsSubmitting(false)
+      alert("Failed to upload notice!")
+    }
   }
 
   const handleCancel = () => {
@@ -123,58 +128,6 @@ export function UploadNotice({ onCancel }: UploadNoticeProps) {
                 onChange={(e) => setContent(e.target.value)}
                 required
               />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Notice Image (Optional)</Label>
-              {!imagePreview ? (
-                <div
-                  className={`border-2 border-dashed rounded-lg p-6 text-center ${
-                    isDragging ? "border-purple-500 bg-purple-50" : "border-gray-300"
-                  }`}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                >
-                  <div className="flex flex-col items-center justify-center gap-2">
-                    <Upload className="h-10 w-10 text-gray-400" />
-                    <p className="text-lg font-medium">Drag and drop image here</p>
-                    <p className="text-sm text-gray-500">or</p>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => document.getElementById("image-upload")?.click()}
-                    >
-                      Browse Images
-                    </Button>
-                    <input
-                      id="image-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageChange}
-                    />
-                    <p className="text-xs text-gray-500 mt-2">Supported formats: JPG, PNG, GIF, WebP</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="relative rounded-lg overflow-hidden border border-gray-200">
-                  <img
-                    src={imagePreview || "/placeholder.svg"}
-                    alt="Notice preview"
-                    className="w-full h-64 object-cover"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="icon"
-                    className="absolute top-2 right-2"
-                    onClick={removeImage}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
             </div>
           </div>
 

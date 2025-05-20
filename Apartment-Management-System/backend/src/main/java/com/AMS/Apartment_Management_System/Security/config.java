@@ -45,6 +45,7 @@ public class config {
                             .requestMatchers("/api/requests/submit").permitAll()
                             .requestMatchers("/api/requests/**").permitAll()
                             .requestMatchers("/api/marketplace", "/api/marketplace/**").permitAll()
+                            .requestMatchers("/api/notices", "/api/notices/**").permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/**").hasRole("USER")
                             .anyRequest().authenticated());
