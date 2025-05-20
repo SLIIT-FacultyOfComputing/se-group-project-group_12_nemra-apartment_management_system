@@ -6,7 +6,7 @@ import { useAuth } from "@/context/auth-context"
 import AdminDashboardOverview from "@/components/admin/overview"
 
 export default function AdminDashboard() {
-  const { user, loading, isAdmin } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
 
@@ -19,10 +19,10 @@ export default function AdminDashboard() {
     if (!mounted) return
 
     // If not loading and no user or not admin, redirect to login
-    if (!loading && (!user || !isAdmin)) {
+    if (!loading && (!user || user.isAdmin !== true)) {
       router.push("/")
     }
-  }, [user, loading, router, mounted, isAdmin])
+  }, [user, loading, router, mounted])
 
   // Show loading state while checking auth or before mounting
   if (loading || !mounted) {
@@ -34,7 +34,7 @@ export default function AdminDashboard() {
   }
 
   // If no user or not admin, don't render the dashboard (will redirect in useEffect)
-  if (!user || !isAdmin) {
+  if (!user || user.isAdmin !== true) {
     return null
   }
 

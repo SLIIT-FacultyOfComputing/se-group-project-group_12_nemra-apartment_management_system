@@ -34,79 +34,29 @@ export default function MarketplacePage() {
   // Simulate fetching marketplace items
   useEffect(() => {
     const fetchItems = async () => {
-      // In a real app, you would fetch this data from your API
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      setItems([
-        {
-          id: "1",
-          title: "Leather Sofa",
-          description: "Brown leather sofa in excellent condition, 3 years old.",
-          price: 30000,
-          image: "https://assets.wfcdn.com/im/37206897/compr-r85/3066/306628598/clay-78-genuine-leather-sofa.jpg",
-          seller: "R.M.Sudarshan",
-          date: "2024-12-10",
-          category: "furniture",
-        },
-        {
-          id: "2",
-          title: 'Samsung TV 55"',
-          description: "Smart TV with 4K resolution, includes wall mount.",
-          price: 52000,
-          image: "https://www.greenware.lk/wp-content/uploads/2024/09/Samsung-55-inch-Q65D-QLED-Price-In-Sri-Lanka-scaled.webp",
-          seller: "Nushu Perera",
-          date: "2025-02-27",
-          category: "electronics",
-        },
-        {
-          id: "3",
-          title: "Refrigerator",
-          description: "Double door refrigerator, frost-free, 300L capacity.",
-          price: 45000,
-          image: "https://damro.lk/wp-content/uploads/2020/02/DRID240GRS-1-548x450.jpg",
-          seller: "K.Raguwaran",
-          date: "2025-03-18",
-          category: "appliances",
-        },
-        {
-          id: "4",
-          title: "Dining Table Set",
-          description: "Wooden dining table with 6 chairs, good condition.",
-          price: 37000,
-          image: "https://www.sierralivingconcepts.com/images/thumbs/0403037_dallas-ranch-rustic-solid-wood-double-pedestal-dining-table-set.jpeg",
-          seller: "W.K.T.Herath",
-          date: "2025-03-29",
-          category: "furniture",
-        },
-        {
-          id: "5",
-          title: "Indoor Plant in Decorative Pot",
-          description: "A potted plant like a snake plant, succulent, or fern, placed in a stylish, decorative pots",
-          price: 800,
-          image: "https://smartgardenguide.com/wp-content/uploads/2019/05/best-houseplants-for-beginners-2-1.jpg",
-          seller: "Saraswathi Nandini",
-          date: "2025-04.01",
-          category: "Home Decor",
-        },
-        {
-          id: "6",
-          title: "Geometric Table Lamp",
-          description: "A modern geometric table lamp with a unique design, ideal for placing on side tables or desks",
-          price: 3800,
-          image: "https://m.media-amazon.com/images/I/81PIpVF+osL._AC_UF894,1000_QL80_.jpg",
-          seller: "Gayathri Disanayaka",
-          date: "2025-04.01",
-          category: "Home Decor",
-        },
-      ])
-
-      setIsLoading(false)
+      try {
+        const response = await fetch("http://localhost:8081/api/marketplace")
+        if (!response.ok) {
+          throw new Error("Failed to fetch items")
+        }
+        const data = await response.json()
+        setItems(data)
+      } catch (error) {
+        console.error("Error fetching items:", error)
+        toast({
+          title: "Error",
+          description: "Failed to fetch marketplace items. Please try again.",
+          variant: "destructive",
+        })
+      } finally {
+        setIsLoading(false)
+      }
     }
 
     fetchItems()
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!newItem.title || !newItem.description || !newItem.price) {
@@ -118,27 +68,46 @@ export default function MarketplacePage() {
       return
     }
 
-    // In a real app, you would send this to your API
-    const item: Item = {
-      id: Date.now().toString(),
-      title: newItem.title,
-      description: newItem.description,
-      price: Number.parseFloat(newItem.price),
-      image: "/placeholder.svg?height=200&width=300",
-      seller: "You",
-      date: new Date().toISOString().split("T")[0],
-      category: newItem.category,
+    try {
+      const response = await fetch("http://localhost:8081/api/marketplace", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: newItem.title,
+          description: newItem.description,
+          price: Number.parseFloat(newItem.price),
+          category: newItem.category,
+          sellerId: "current-user-id", // TODO: Get from auth context
+          sellerName: "Current User", // TODO: Get from auth context
+          date: new Date().toISOString().split("T")[0],
+          image: "/placeholder.svg?height=200&width=300"
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to create item")
+      }
+
+      const createdItem = await response.json()
+      setItems([createdItem, ...items])
+      setNewItem({ title: "", description: "", price: "", category: "furniture" })
+      setIsModalOpen(false)
+
+      toast({
+        title: "Item Listed",
+        description: "Your item has been listed successfully",
+        variant: "success",
+      })
+    } catch (error) {
+      console.error("Error creating item:", error)
+      toast({
+        title: "Error",
+        description: "Failed to list item. Please try again.",
+        variant: "destructive",
+      })
     }
-
-    setItems([item, ...items])
-    setNewItem({ title: "", description: "", price: "", category: "furniture" })
-    setIsModalOpen(false)
-
-    toast({
-      title: "Item Listed",
-      description: "Your item has been listed successfully",
-      variant: "success",
-    })
   }
 
   const filteredItems = items.filter((item) => {

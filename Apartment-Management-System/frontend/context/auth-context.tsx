@@ -1,30 +1,28 @@
 "use client"
 
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-import { STORAGE_KEYS } from "@/constants"
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { useRouter } from "next/navigation"
 
-interface User {
-  username: string
-  email: string
-  isAdmin: boolean
-  houseNo?: string
-  phone?: string
-}
+type User = {
+  username?: string
+  email?: string
+  isAdmin?: boolean
+} | null
 
-interface AuthContextType {
-  user: User | null
-  setUser: (user: User | null) => void
+type AuthContextType = {
+  user: User
+  setUser: (user: User) => void
   loading: boolean
   logout: () => void
-  isAdmin: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User>(null)
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
+  const router = useRouter()
 
   // Handle hydration mismatch by only running effects after mount
   useEffect(() => {
@@ -35,28 +33,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!mounted) return
 
-    const checkAuth = () => {
+    const checkAuth = async () => {
       try {
         // Check for auth token in cookies
         const hasToken = document.cookie.includes("auth-token=")
 
         if (hasToken) {
           // Try to get user from localStorage
-          const storedUser = localStorage.getItem(STORAGE_KEYS.USER)
+          const storedUser = localStorage.getItem("user")
           if (storedUser) {
             const parsedUser = JSON.parse(storedUser)
-            console.log('Stored user:', parsedUser)
             setUser(parsedUser)
-          } else {
-            // For demo purposes, we'll set a default user
-            const defaultUser: User = {
-              username: "DemoUser",
-              email: "demo@example.com",
-              houseNo: "A101",
-              role: "user",
+            
+            // Redirect based on user role
+            if (parsedUser.isAdmin === true) {
+              console.log("Redirecting to admin dashboard")
+              router.push("/admin/dashboard")
+            } else {
+              console.log("Redirecting to user dashboard")
+              router.push("/dashboard")
             }
-            setUser(defaultUser)
-            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(defaultUser))
           }
         }
       } catch (error) {
@@ -66,19 +62,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // Use a slight delay to ensure the check happens after hydration
-    const timer = setTimeout(checkAuth, 100)
-    return () => clearTimeout(timer)
-  }, [mounted])
+    checkAuth()
+  }, [mounted, router])
 
   // Update localStorage when user changes
   useEffect(() => {
     if (!mounted) return
 
     if (user) {
-      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user))
+      localStorage.setItem("user", JSON.stringify(user))
     } else {
-      localStorage.removeItem(STORAGE_KEYS.USER)
+      localStorage.removeItem("user")
     }
   }, [user, mounted])
 
@@ -86,19 +80,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     // Clear the auth token cookie
     document.cookie = "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;"
-
     // Clear localStorage
-    localStorage.removeItem(STORAGE_KEYS.USER)
-
+    localStorage.removeItem("user")
     // Clear user state
     setUser(null)
+    // Redirect to login page
+    router.push("/")
   }
 
-  // Check if user is admin
-  const isAdmin = user?.role === "admin"
-  console.log('Auth Context - isAdmin:', isAdmin, 'User:', user)
-
-  return <AuthContext.Provider value={{ user, setUser, loading, logout, isAdmin }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ user, setUser, loading, logout }}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {
